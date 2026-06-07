@@ -1,0 +1,167 @@
+/* ============================================================
+   Yusuf Uzun — interactions
+   ============================================================ */
+(function () {
+  "use strict";
+
+  /* ---------- i18n ---------- */
+  const I18N = {
+    tr: {
+      "nav.projects": "Projeler",
+      "nav.resume": "Özgeçmiş",
+      "nav.cta": "İletişime geç",
+      "hero.role": "Elektrik-Elektronik Mühendisliği öğrencisi",
+      "cv.label": "CV / Özgeçmiş",
+      "cv.handle": "PDF’i aç →",
+      "resume.eyebrow": "Özgeçmiş",
+      "resume.title": "Deneyim & Eğitim",
+      "resume.exp": "Deneyim",
+      "resume.edu": "Eğitim",
+      "resume.upcoming": "Yaklaşan",
+      "exp.nokia.role": "Stajyer Mühendis",
+      "exp.gantek.role": "Stajyer Mühendis",
+      "exp.gantek.note": "Linux · SQL · Oracle",
+      "exp.aslar.role": "Elektrik Mühendisi",
+      "edu.uni.school": "Yeditepe Üniversitesi",
+      "edu.uni.deg": "Elektrik-Elektronik Mühendisliği (Lisans)",
+      "edu.lise.school": "Kadıköy Anadolu Lisesi",
+      "projects.eyebrow": "Seçili çalışmalar",
+      "projects.title": "Projeler",
+      "projects.note": "Buradaki projeler birer örnektir — kendi projelerinle değiştir.",
+      "p1.name": "VoltHub — EEE Bilgi Merkezi",
+      "p1.desc": "EEE öğrencileri için ders notu, sınav ve kaynak paylaşım platformu. Supabase tabanlı, PWA olarak telefona kurulabilen bir bilgi merkezi.",
+      "projects.soon": "Yakında",
+      "p2.desc": "NBA fantasy ligleri için istatistik ve performans analiz aracı. Geliştirme aşamasında.",
+      "footer.top": "Başa dön",
+    },
+    en: {
+      "nav.projects": "Projects",
+      "nav.resume": "Résumé",
+      "nav.cta": "Get in touch",
+      "hero.role": "Electrical & Electronics Engineering student",
+      "cv.label": "CV / Résumé",
+      "cv.handle": "Open PDF →",
+      "resume.eyebrow": "Résumé",
+      "resume.title": "Experience & Education",
+      "resume.exp": "Experience",
+      "resume.edu": "Education",
+      "resume.upcoming": "Upcoming",
+      "exp.nokia.role": "Engineering Intern",
+      "exp.gantek.role": "Engineering Intern",
+      "exp.gantek.note": "Linux · SQL · Oracle",
+      "exp.aslar.role": "Electrical Engineer",
+      "edu.uni.school": "Yeditepe University",
+      "edu.uni.deg": "Electrical & Electronics Engineering (BSc)",
+      "edu.lise.school": "Kadıköy Anatolian High School",
+      "projects.eyebrow": "Selected work",
+      "projects.title": "Projects",
+      "projects.note": "These projects are placeholders — replace them with your own.",
+      "p1.name": "VoltHub — EEE Knowledge Hub",
+      "p1.desc": "A note, exam and resource sharing platform for EEE students. A Supabase-powered knowledge hub, installable to your phone as a PWA.",
+      "projects.soon": "Coming soon",
+      "p2.desc": "A statistics and performance analysis tool for NBA fantasy leagues. Currently in development.",
+      "footer.top": "Back to top",
+    },
+  };
+
+  function applyLang(lang) {
+    const dict = I18N[lang] || I18N.tr;
+    document.documentElement.lang = lang;
+    document.querySelectorAll("[data-i18n]").forEach((el) => {
+      const key = el.getAttribute("data-i18n");
+      if (dict[key] != null) el.innerHTML = dict[key];
+    });
+    document.querySelectorAll(".lang-toggle button").forEach((b) => {
+      b.classList.toggle("active", b.dataset.lang === lang);
+    });
+    try { localStorage.setItem("yu_lang", lang); } catch (e) {}
+  }
+
+  let savedLang = "tr";
+  try { savedLang = localStorage.getItem("yu_lang") || "tr"; } catch (e) {}
+  applyLang(savedLang);
+
+  document.querySelectorAll(".lang-toggle button").forEach((b) => {
+    b.addEventListener("click", () => applyLang(b.dataset.lang));
+  });
+
+  /* ---------- Hero / reveal gate ----------
+     Add .anim-ready only after rAF actually fires — proving the page is
+     painting. On a backgrounded/throttled frame rAF never fires, so the
+     class is never added and all content stays at its VISIBLE base state. */
+  const prefersReducedEarly = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!prefersReducedEarly) {
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        document.documentElement.classList.add("anim-ready");
+      });
+    });
+  }
+
+  /* ---------- Nav scroll state + progress ---------- */
+  const nav = document.querySelector(".nav");
+  const progress = document.querySelector(".progress");
+  function onScroll() {
+    const y = window.scrollY;
+    nav.classList.toggle("scrolled", y > 24);
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    progress.style.width = (h > 0 ? (y / h) * 100 : 0) + "%";
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  /* ---------- Reveal observer ---------- */
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
+  document.querySelectorAll("[data-reveal]").forEach((el) => io.observe(el));
+
+  /* ---------- Parallax ---------- */
+  const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const grid = document.querySelector(".hero-grid-bg");
+  const portrait = document.querySelector(".hero-portrait");
+  let ticking = false;
+  function parallax() {
+    const y = window.scrollY;
+    if (grid) grid.style.transform = "translateY(" + y * 0.18 + "px)";
+    if (portrait && window.innerWidth > 880) portrait.style.transform = "translateY(" + y * -0.06 + "px)";
+    ticking = false;
+  }
+  if (!prefersReduced) {
+    window.addEventListener("scroll", () => {
+      if (!ticking) { requestAnimationFrame(parallax); ticking = true; }
+    }, { passive: true });
+  }
+
+  /* ---------- Mobile menu ---------- */
+  const burger = document.querySelector(".nav-burger");
+  const mobileMenu = document.querySelector(".mobile-menu");
+  if (burger && mobileMenu) {
+    const toggle = (open) => {
+      mobileMenu.classList.toggle("open", open);
+      burger.classList.toggle("open", open);
+      document.body.style.overflow = open ? "hidden" : "";
+    };
+    burger.addEventListener("click", () => toggle(!mobileMenu.classList.contains("open")));
+    mobileMenu.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => toggle(false)));
+  }
+
+  /* ---------- Magnetic buttons ---------- */
+  if (!prefersReduced && window.matchMedia("(hover: hover)").matches) {
+    document.querySelectorAll("[data-magnetic]").forEach((el) => {
+      el.addEventListener("mousemove", (e) => {
+        const r = el.getBoundingClientRect();
+        const mx = e.clientX - r.left - r.width / 2;
+        const my = e.clientY - r.top - r.height / 2;
+        el.style.transform = "translate(" + mx * 0.18 + "px," + my * 0.22 + "px)";
+      });
+      el.addEventListener("mouseleave", () => { el.style.transform = ""; });
+    });
+  }
+
+  /* ---------- Year ---------- */
+  const yEl = document.getElementById("year");
+  if (yEl) yEl.textContent = new Date().getFullYear();
+})();

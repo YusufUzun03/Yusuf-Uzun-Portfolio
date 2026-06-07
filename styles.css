@@ -1,0 +1,31 @@
+# Yusuf Uzun — Kişisel Web Sitesi
+
+Elektrik-Elektronik Mühendisliği öğrencisi Yusuf Uzun'un kişisel sitesi.
+Koyu, minimal tasarım · TR/EN dil desteği · akıcı scroll & parallax animasyonları.
+
+## 🚀 GitHub Pages ile yayınlama
+
+1. Bu klasördeki tüm dosyaları (klasör yapısını koruyarak) yeni bir GitHub deposuna yükle — `index.html` kök dizinde olmalı.
+2. Depo ayarları → **Settings → Pages**.
+3. **Source** olarak `Deploy from a branch` → `main` / `(root)` seç → **Save**.
+4. Birkaç dakika içinde siten `https://YusufUzun03.github.io/<depo-adı>/` adresinde yayında olur.
+
+> İpucu: Depoyu `YusufUzun03.github.io` adıyla oluşturursan site doğrudan
+> `https://YusufUzun03.github.io` adresinde çalışır.
+
+## 📁 Dosyalar
+
+| Dosya | Açıklama |
+|-------|----------|
+| `index.html` | Ana sayfa |
+| `styles.css` | Tüm stiller ve tasarım tokenları |
+| `app.js` | Dil değiştirici, scroll/parallax animasyonları |
+| `assets/Yusuf-Uzun-CV.pdf` | CV / Özgeçmiş |
+
+## ✏️ Nasıl düzenlerim?
+
+- **Metinler:** `app.js` içindeki `I18N` sözlüğünden TR ve EN metinleri değiştir.
+- **Projeler:** `index.html` içindeki `#projects` bölümünde başlık, açıklama, etiket ve linkleri güncelle.
+- **Deneyim / Eğitim:** `index.html` içindeki `#resume` bölümünden zaman çizelgesini düzenle.
+- **Renk:** `styles.css` en üstteki `:root` içindeki `--accent` değerini değiştir.
+- **CV:** Yeni CV'ni `assets/Yusuf-Uzun-CV.pdf` ile değiştir (dosya adını aynı tutarsan link otomatik çalışır).
